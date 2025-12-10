@@ -131,37 +131,39 @@ namespace RockWeb.Blocks.Utility
         /// </summary>
         private void BindGrid()
         {
-            RockContext rockContext = new RockContext();
-            GroupService groupService = new GroupService( rockContext );
+            using(RockContext rockContext = new RockContext())
+            {
+                GroupService groupService = new GroupService( rockContext );
 
-            // sample query to display a few people
-            // Use AsNoTracking() since these records won't be modified, and therefore don't need to be tracked by the EF change tracker
-            var qry = groupService.Queryable()
-                .Where( g => g.GroupType.Name == "Small Group" && g.IsActive )
-                .Select( g => new
+                // sample query to display a few people
+                // Use AsNoTracking() since these records won't be modified, and therefore don't need to be tracked by the EF change tracker
+                var qry = groupService.Queryable()
+                    .Where( g => g.GroupType.Name == "Small Group" && g.IsActive )
+                    .Select( g => new
+                    {
+                        g.Id,
+                        g.Name,
+                        g.Description,
+                        g.CreatedDateTime,
+                        g.ModifiedDateTime,
+                        g.GroupCapacity
+                    } );
+
+                // sort the query based on the column that was selected to be sorted
+                var sortProperty = gList.SortProperty;
+                if ( gList.AllowSorting && sortProperty != null )
                 {
-                    g.Id,
-                    g.Name,
-                    g.Description,
-                    g.CreatedDateTime,
-                    g.ModifiedDateTime,
-                    g.GroupCapacity
-                } );
+                    qry = qry.Sort( sortProperty );
+                }
+                else
+                {
+                    qry = qry.OrderBy( g => g.Name ).ThenBy( g => g.CreatedDateTime );
+                }
 
-            // sort the query based on the column that was selected to be sorted
-            var sortProperty = gList.SortProperty;
-            if ( gList.AllowSorting && sortProperty != null )
-            {
-                qry = qry.Sort( sortProperty );
+                // set the datasource as a query. This allows the grid to only fetch the records that need to be shown based on the grid page and page size
+                gList.SetLinqDataSource( qry );
+                gList.DataBind();
             }
-            else
-            {
-                qry = qry.OrderBy( g => g.Name).ThenBy( g => g.CreatedDateTime);
-            }
-
-            // set the datasource as a query. This allows the grid to only fetch the records that need to be shown based on the grid page and page size
-            gList.SetLinqDataSource( qry );
-            gList.DataBind();
         }
 
         #endregion
