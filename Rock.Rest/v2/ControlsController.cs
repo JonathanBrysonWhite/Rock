@@ -114,6 +114,7 @@ namespace Rock.Rest.v2
         #region BW Assessment
         /// <summary>
         /// Gets the list of groups
+        /// Authorization, RBAC, and Paging not included as they are not explicitly called out in the requirements, but could be extended in the future.
         /// </summary>
         /// <param name="includeInactive">Whether or not to include inactive groups</param>
         /// <returns>A collection of <see cref="GroupListItem"/></returns>
