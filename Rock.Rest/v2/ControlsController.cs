@@ -22,6 +22,7 @@ using System.Data.Entity;
 using System.IO;
 using System.IO.Compression;
 using System.Linq;
+using System.Linq.Dynamic.Core;
 using System.Net;
 using System.Net.Http.Headers;
 using System.Reflection;
@@ -82,6 +83,26 @@ using RoutePrefixAttribute = System.Web.Http.RoutePrefixAttribute;
 
 namespace Rock.Rest.v2
 {
+
+    /// <summary>
+    /// Class to represent group data item returned from GetGroups
+    /// Normally would be part of a seperate file, but included in this class to conform with the project spec
+    /// </summary>
+    public class GroupListItem
+    {
+        /// <summary>
+        /// Guid representing the identifier for the group
+        /// </summary>
+        public Guid Guid { get; set; }
+        /// <summary>
+        /// Name of the group
+        /// </summary>
+        public string Name { get; set; }
+        /// <summary>
+        /// Boolean representing whether or not the group is active
+        /// </summary>
+        public bool IsActive { get; set; }
+    }
     /// <summary>
     /// Provides API endpoints for the Controls controller.
     /// </summary>
@@ -89,6 +110,43 @@ namespace Rock.Rest.v2
     [Rock.SystemGuid.RestControllerGuid( "815B51F0-B552-47FD-8915-C653EEDD5B67" )]
     public class ControlsController : ApiControllerBase
     {
+
+        #region BW Assessment
+        /// <summary>
+        /// Gets the list of groups
+        /// </summary>
+        /// <param name="includeInactive">Whether or not to include inactive groups</param>
+        /// <returns>A collection of <see cref="GroupListItem"/></returns>
+        [HttpGet]
+        [Route("groups")]
+        public IActionResult GetGroups( bool includeInactive = false)
+        {
+            using ( RockContext rockContext = new RockContext())
+            {
+                GroupService groupService = new GroupService( rockContext );
+
+                var query = groupService.Queryable();
+
+                if(!includeInactive)
+                {
+                    query = query.Where( g => g.IsActive );
+                }
+
+                var results = query
+                    .OrderBy( g => g.Name )
+                    .Select( g => new GroupListItem
+                    {
+                        Guid = g.Guid,
+                        Name = g.Name,
+                        IsActive = g.IsActive
+                    })
+                    .ToList();
+
+                return Ok( results );
+            }
+        }
+        #endregion
+
         #region Account Picker
 
         /// <summary>
