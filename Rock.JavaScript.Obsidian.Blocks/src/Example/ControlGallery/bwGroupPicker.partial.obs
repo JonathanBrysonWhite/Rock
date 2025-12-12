@@ -1,0 +1,28 @@
+<template>
+    <GalleryAndResult :value="value"
+                      :importCode="importCode"
+                      :exampleCode="exampleCode"
+                      enableReflection>
+
+        <BWGroupPicker :includeInactive="includeInactive" />
+
+        <template #settings>
+            <div class="row">
+                <CheckBox label="Include Inactive" v-model="includeInactive" />
+            </div>
+        </template>
+    </GalleryAndResult>
+</template>
+
+<script setup lang="ts">
+    import { ref } from "vue";
+    import GalleryAndResult from "./common/galleryAndResult.partial.obs";
+    import BWGroupPicker from "@Obsidian/Controls/bwGroupPicker.obs";
+    import CheckBox from "@Obsidian/Controls/checkBox.obs";
+    import { getSfcControlImportPath } from "./common/utils.partial";
+
+    const includeInactive = ref(false);
+    const value = ref("1");
+    const importCode = getSfcControlImportPath("bwGroupPicker");
+    const exampleCode = `<BWGroupPicker />`;
+</script>
