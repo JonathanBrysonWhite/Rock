@@ -18,7 +18,7 @@
                         <Columns>
                             <Rock:RockBoundField DataField="Name" HeaderText="Name" SortExpression="Name" />
                             <Rock:RockBoundField DataField="Description" HeaderText="Description" SortExpression="Description" />
-                            <Rock:RockBoundField DataField="GroupCapacity" HeaderText="Capacity" SortExpression="Capacity" />
+                            <Rock:RockBoundField DataField="CreatedDateTime" HeaderText="Date Created" SortExpression="Created" />
                         </Columns>
                     </Rock:Grid>
                 </div>

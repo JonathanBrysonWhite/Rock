@@ -129,7 +129,12 @@ namespace RockWeb.Blocks.Utility
                 ltDescription.Text = $"<strong>Description:</strong> {group.Description}";
                 ltDateCreated.Text = $"<strong>Date Created:</strong> {group.CreatedDateTime.ToShortDateString()}";
                 ltDateModified.Text = $"<strong>Date Modified:</strong> {group.ModifiedDateTime.ToShortDateString()}";
-                ltCapacity.Text = $"<strong>Capacity:</strong> {group.GroupCapacity}";
+                string capacity = "Unlimited";
+                if(group.GroupCapacity.HasValue)
+                {
+                    capacity = group.GroupCapacity.ToString();
+                }
+                ltCapacity.Text = $"<strong>Capacity:</strong> {capacity}";
             }
 
         }
